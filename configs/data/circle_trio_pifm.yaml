@@ -1,0 +1,38 @@
+_target_: src.data.circle_trio_datamodule.CircleTrioDataModule
+
+dim: 2
+
+n_train: 3000
+n_val: 500
+n_test: 2000
+
+# source circle xa — anchor at origin
+xa_radius: 1.0
+xa_cx: 0.0
+xa_cy: 0.0
+
+# axis1 target circle xb — smaller, shifted right
+xb_radius: 0.5
+xb_cx: 5.0
+xb_cy: 0.0
+
+# axis2 target circle xc — same size, shifted up
+xc_radius: 1.0
+xc_cx: 0.0
+xc_cy: 5.0
+
+# test target circle xd — at the (axis1=1, axis2=0.5) product corner
+xd_radius: 0.5
+xd_cx: 5.0
+xd_cy: 2.5
+
+# fraction of axis2 traversed during evaluation (0 < axis2_end <= 1)
+axis2_end: 0.5
+
+# OT regularisation: 0.0 = exact EMD, >0 = Sinkhorn
+ot_reg: 0.05
+
+batch_size: 512
+num_workers: 0
+pin_memory: false
+seed: 42

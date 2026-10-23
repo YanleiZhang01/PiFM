@@ -1,0 +1,17 @@
+_target_: src.data.curly_flow_datamodule.CurlyFlowDataModule
+
+dim: 2
+
+n_train: 5000
+n_val: 500
+n_test: 2000
+n_ref: 10000
+
+noise: 0.1
+bias: right
+factor: 0.9
+
+batch_size: 512
+num_workers: 0
+pin_memory: false
+seed: 42

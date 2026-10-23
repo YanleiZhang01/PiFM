@@ -1,0 +1,51 @@
+# @package _global_
+
+defaults:
+  - override /data: circle_trio_pifm.yaml
+  - override /model: pifm.yaml
+  - override /trainer: default.yaml
+  - override /callbacks: default.yaml
+
+task_name: circle_trio_pifm
+tags: ["pifm", "synthetic", "circle_trio"]
+
+optimized_metric: "val_loss"
+
+model:
+  dim: ${data.dim}
+  hidden_dim: 256
+  bridge_depth: 3
+  product_depth: 4
+  lr: 1.0e-3
+  sigma: 0.01
+  lambda_lb: 0.0
+  use_lie_bracket: false
+  # Current PiFM product training uses the learned one-axis bridge derivatives
+  # as boundary teachers, so the conditional bridges need a short warmup first.
+  bridge_warmup_steps: 500
+  bridge_warmup_use_velocity_targets: false
+  product_teacher_use_local_velocity: false
+  grad_clip_norm: 1.0
+  sample_steps: 100
+  max_velocity_norm: null
+  axis1:
+    method: conditional_fm
+    velocity_key: null
+  axis2:
+    method: conditional_fm
+    velocity_key: null
+
+trainer:
+  max_epochs: 200
+
+callbacks:
+  model_checkpoint:
+    monitor: "val_loss"
+    mode: "min"
+    filename: "best"
+    save_last: false
+    auto_insert_metric_name: false
+  early_stopping:
+    monitor: "val_loss"
+    mode: "min"
+    patience: 30

@@ -1,0 +1,14 @@
+# @package _global_
+
+# Batch-size sensitivity study for the circle_trio PiFM experiment.
+# Sweeps 8 batch sizes × 5 seeds = 40 independent training runs.
+#
+# Usage:
+#   bash scripts/run_circle_trio_batchsize.sh
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      data.batch_size: 64,128,192,256,320,384,448,512
+      seed: 0,1,2,3,4

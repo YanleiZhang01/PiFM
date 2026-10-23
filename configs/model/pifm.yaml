@@ -1,0 +1,51 @@
+_target_: src.models.pifm_module.PiFMLitModule
+
+dim: 50
+hidden_dim: 256
+bridge_depth: 3
+product_depth: 4
+
+lr: 0.001
+weight_decay: 0.0
+
+# Per-module AdamW settings. Null entries fall back to model.lr/model.weight_decay.
+optimizer:
+  bridge_axis1:
+    lr: null
+    weight_decay: null
+  bridge_axis2:
+    lr: null
+    weight_decay: null
+  product:
+    lr: null
+    weight_decay: null
+
+sigma: 0.01
+axis1:
+  method: conditional_fm
+  velocity_key: null
+axis2:
+  method: conditional_fm
+  velocity_key: null
+lambda_lb: 0.1
+use_lie_bracket: True
+
+# Number of warmup batches spent fitting each axis bridge before product loss.
+# Manual optimization performs one optimizer step per bridge on each warmup batch.
+bridge_warmup_steps: 1000
+bridge_teacher_knn_k: 16
+bridge_warmup_use_velocity_targets: True
+
+# Optionally supervise product vector fields with a local KNN-smoothed
+# reference drift at sampled interior states x_ts.
+product_teacher_use_local_velocity: False
+product_teacher_knn_k: 100
+product_teacher_kernel: gaussian
+product_teacher_bandwidth: null
+
+grad_clip_norm: 1.0
+sample_steps: 100
+
+# Optional differentiable cap on each predicted velocity vector norm.
+# Leave null for unconstrained toy runs; set for high-dimensional single-cell rollouts.
+max_velocity_norm: null

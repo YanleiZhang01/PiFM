@@ -1,0 +1,58 @@
+_target_: src.data.axis_pifm_datamodule.AxisPiFMLDataModule
+
+data_path: ${paths.data_dir}/reprogramming_pifm_preprocessed_0_6.h5ad
+
+# Waddington-OT MEF-to-iPSC serum reprogramming.
+# axis1 is culture time; axis2 is within-day pluripotency activation.
+axis1_key: day
+axis2_key: pifm_plu_bin
+axis1_values:
+  - 0.0
+  - 0.5
+  - 1.0
+  - 1.5
+  - 2.0
+  - 2.5
+  - 3.0
+  - 3.5
+  - 4.0
+  - 4.5
+  - 5.0
+  - 5.5
+  - 6.0
+
+axis2_values: [plu_low, plu_mid, plu_high]
+
+anchor:
+  axis1: 0.0
+  axis2: plu_low
+
+holdout_points: []
+  
+axis1_method: conditional_fm
+axis2_method: conditional_fm
+# Conditional FM uses OT-paired displacements. Velocity keys and pseudo-velocity
+# settings are ignored unless an axis method is changed to curly_fm.
+axis1_velocity_key: null
+axis2_velocity_key: null
+axis1_pseudo_velocity_method: ot_barycentric # nearest_forward, ot_barycentric, knn_forward
+axis2_pseudo_velocity_method: ot_barycentric # nearest_forward, ot_barycentric, knn_forward
+pseudo_velocity_knn_k: 8
+pseudo_velocity_ot_reg: 0.05
+pseudo_velocity_ot_max_iter: 200
+pseudo_velocity_ot_tol: 1.0e-4
+
+# Use coordinates stored in AnnData.obsm. When obsm_key is X_pca,
+# latent_dim selects the number of leading PCs, e.g. 5, 10, or 50.
+obsm_key: X_pca
+layer: null
+latent_dim: 50
+raw_dim_threshold: 50
+
+n_samples: null
+max_cells_per_point: 512
+batch_size: 128
+train_val_test_split: [0.8, 0.1, 0.1]
+num_workers: 0
+pin_memory: False
+seed: 42

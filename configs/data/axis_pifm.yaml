@@ -1,0 +1,42 @@
+_target_: src.data.axis_pifm_datamodule.AxisPiFMDataModule
+
+data_path: ${paths.data_dir}/axis_pifm.h5ad
+
+axis1_key: axis1
+axis2_key: axis2
+axis1_values: null
+axis2_values: null
+
+anchor:
+  axis1: 0
+  axis2: A
+
+holdout_points:
+  - axis1: 3
+    axis2: B
+
+axis1_method: conditional_fm
+axis2_method: conditional_fm
+axis1_velocity_key: null
+axis2_velocity_key: null
+axis1_pseudo_velocity_method: nearest_forward
+axis2_pseudo_velocity_method: nearest_forward
+pseudo_velocity_knn_k: 8
+pseudo_velocity_ot_reg: 0.05
+pseudo_velocity_ot_max_iter: 200
+pseudo_velocity_ot_tol: 1.0e-4
+
+# "auto": use raw X when dim <= raw_dim_threshold; otherwise use obsm["X_pca"]
+# when present, else fit TruncatedSVD to latent_dim.
+obsm_key: auto
+layer: null
+latent_dim: 50
+raw_dim_threshold: 50
+
+n_samples: null
+max_cells_per_point: null
+batch_size: 32
+train_val_test_split: [0.8, 0.1, 0.1]
+num_workers: 0
+pin_memory: False
+seed: 42

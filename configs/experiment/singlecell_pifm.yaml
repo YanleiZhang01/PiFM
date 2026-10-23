@@ -1,0 +1,71 @@
+# @package _global_
+
+defaults:
+  - override /data: singlecell_pifm.yaml
+  - override /model: pifm.yaml
+  - override /trainer: gpu.yaml
+  - override /callbacks: default.yaml
+  - override /launcher: basic.yaml
+
+task_name: singlecell_pifm
+tags: ["pifm", "single_cell", "reprogramming", "pluripotency"]
+
+optimized_metric: "val_loss"
+
+model:
+  dim: ${data.latent_dim}
+  # Pretrain the two one-axis flows before fitting the product field.
+  # WOT still needs explicit bridge warmup, but keep it short enough that
+  # product training starts within a normal run.
+  bridge_warmup_steps: 1000
+  optimizer:
+    bridge_axis1:
+      lr: 0.005
+      weight_decay: 0.0001
+    bridge_axis2:
+      lr: 0.005
+      weight_decay: 0.0001
+    product:
+      lr: 0.001
+      weight_decay: 0.0001
+  axis1:
+    method: ${data.axis1_method}
+    velocity_key: ${data.axis1_velocity_key}
+  axis2:
+    method: ${data.axis2_method}
+    velocity_key: ${data.axis2_velocity_key}
+  max_velocity_norm: null
+  bridge_warmup_use_velocity_targets: False
+  # Conditional FM uses paired displacement targets, so no local velocity teacher is needed.
+  product_teacher_use_local_velocity: False
+  product_teacher_knn_k: 100
+  product_teacher_kernel: gaussian
+  product_teacher_bandwidth: null
+
+
+callbacks:
+  model_checkpoint:
+    monitor: "val_loss"
+    mode: "min"
+    filename: "best"
+    save_last: False
+    auto_insert_metric_name: False
+  early_stopping:
+    monitor: "val_loss"
+    mode: "min"
+    patience: 5
+
+
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    params:
+      trainer.max_epochs: 150
+      model.lambda_lb: 0.1
+      data.obsm_key: X_pca
+      data.latent_dim: 50
+      data.axis1_method: conditional_fm
+      model.bridge_warmup_use_velocity_targets: false
+      model.product_teacher_use_local_velocity: false
+      model.sigma: 0.1
+      
